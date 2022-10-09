@@ -1,6 +1,7 @@
 ﻿
 //using System.Linq;
 using LINQOperations.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace LINQOperations.Test
@@ -36,7 +37,13 @@ namespace LINQOperations.Test
             new Car { Name = "Car-3", Brand= "B2"}
         };
 
+
+            var testAllMethodResult = cars.All(x => x.Name.StartsWith("Car")).ToString();
+            this.AddResult(testAllMethodResult);
+
             this.AddResult(fruits.ElementAtOrDefault(10));
+            var predicate = new Func<Car, bool>(x => x.Name == "Car-1");
+            this.AddResult(cars.FirstOrDefault(predicate).ToString());
 
             this.AddResult(fruits.Any().ToString());
             this.AddResult(fruits.Any(x => x == "Banana").ToString());
@@ -53,7 +60,7 @@ namespace LINQOperations.Test
 
             this.AddResult(cars.Append(new Car { Name = "Car-4", Brand = "B3" }).Select(x => x.Name));
 
-
+            var reverse = cars.Reverse();
             return this.results;
 
         }

@@ -207,14 +207,161 @@ namespace LINQOperations.Extensions
             throw new InvalidOperationException($"Sequence contains no matching element ${nameof(source)} {nameof(predicate)}");
         }
 
-        public static IEnumerable<TSource> Join<TSource>()
+        public static IEnumerable<TSource> Intersect<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second)
         {
-            return new TSource[0];
+            if ( first is null || second is null)
+            {
+                throw new ArgumentNullException(first is null ? nameof(first) : nameof(second));
+            }
+
+            var matchList = new List<TSource>();
+            foreach(var item1 in first)
+            {
+                foreach (var item2 in second)
+                {
+                    if(Object.Equals(item1, item2))
+                    {
+                        matchList.Add(item1);
+                    }
+                }
+            }
+
+            return matchList;
+        }
+
+        public static IEnumerable<TSource> Intersect<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
+        {
+            if (first is null)
+            {
+                throw new ArgumentNullException(nameof(first));
+            }
+
+            if (second is null)
+            {
+                throw new ArgumentNullException(nameof(second));
+            }
+
+            if (comparer is null)
+            {
+                throw new ArgumentNullException(nameof(comparer));
+            }
+
+            var matchList = new List<TSource>();
+            foreach (var item1 in first)
+            {
+                foreach (var item2 in second)
+                {
+                    if (comparer.Equals(item1, item2))
+                    {
+                        matchList.Add(item1);
+                    }
+                }
+            }
+
+            return matchList;
+        }
+
+        public static TSource LastOrDefault<TSource>(this IEnumerable<TSource> source)
+        {
+            if (source is null)
+            {
+                throw new ArgumentException(nameof(source));
+            }
+
+            return source.ElementAtOrDefault(source.Count() - 1);
+        }
+
+        public static TSource LastOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+        {
+            if (source is null || predicate is null)
+            {
+                throw new ArgumentException(source is null ? nameof(source) : nameof(predicate));
+            }
+
+            TSource lastMatch = default(TSource);
+            foreach (var item in source)
+            {
+                if (predicate.Invoke(item))
+                {
+                    lastMatch = item;
+                }
+            }
+
+            return lastMatch;
+        }
+
+        public static TSource Last<TSource>(this IEnumerable<TSource> source)
+        {
+            if (source is null)
+            {
+                throw new ArgumentException(nameof(source));
+            }
+
+            if (!source.Any())
+            {
+                throw new InvalidOperationException("Source is empty");
+            }
+
+            return source.ElementAt(source.Count() - 1);
+        }
+
+        public static TSource Last<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+        {
+            if (source is null || predicate is null)
+            {
+                throw new ArgumentException(source is null ? nameof(source) : nameof(predicate));
+            }
+
+            if (!source.Any())
+            {
+                throw new InvalidOperationException("Source is empty");
+            }
+
+            TSource lastMatch = default(TSource);
+            bool isFound = false;
+            foreach (var item in source)
+            {
+                if (predicate.Invoke(item))
+                {
+                    lastMatch = item;
+                    isFound = true;
+                }
+            }
+
+            if (isFound)
+            {
+                throw new InvalidOperationException($"Sequence contains no matching element ${nameof(source)} {nameof(predicate)}");
+            }
+
+            return lastMatch;
         }
 
         public static IEnumerable<TSource> Range<TSource>(int start, int end)
         {
+            if (end - start < 0)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
             return new TSource[end - start];
+        }
+
+        public static IEnumerable<TSource> Reverse<TSource>(this IEnumerable<TSource> source)
+        {
+            if(source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            var count = source.Count();
+            var reverse = new TSource[count];
+
+            foreach (var item in source)
+            {
+                reverse[--count] = item;
+            }
+
+            return reverse;
         }
 
         public static IEnumerable<TResult> Select<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
