@@ -399,6 +399,56 @@ namespace LINQOperations.Extensions
             return resultArr;
         }
 
+        public static IEnumerable<TSource> Union<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second)
+        {
+            if(first is null)
+            {
+                throw new ArgumentNullException(nameof(first));
+            }
+
+            if(second is null)
+            {
+                throw new ArgumentNullException(nameof(second));
+            }
+
+            var union = new List<TSource>();
+
+            foreach (var item in first.Concat(second))
+            {
+                if (union.FindIndex(element => Object.Equals(item, element)) == -1)
+                {
+                    union.Add(item);
+                }
+            }
+
+            return union;
+        }
+
+        public static IEnumerable<TSource> Union<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
+        {
+            if (first is null)
+            {
+                throw new ArgumentNullException(nameof(first));
+            }
+
+            if (second is null)
+            {
+                throw new ArgumentNullException(nameof(second));
+            }
+
+            var union = new List<TSource>();
+
+            foreach (var item in first.Concat(second))
+            {
+                if (union.FindIndex(element => comparer.Equals(item, element)) == -1)
+                {
+                    union.Add(item);
+                }
+            }
+
+            return union;
+        }
+
         public static TSource[] ToArray<TSource>(this IEnumerable<TSource> source)
         {
             var array = new TSource[source.Count()];

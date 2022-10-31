@@ -1,6 +1,4 @@
-﻿
-//using System.Linq;
-using LINQOperations.Extensions;
+﻿using LINQOperations.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -34,8 +32,7 @@ namespace LINQOperations.Test
             Car[] cars = new Car[] {
             new Car { Name = "Car-1", Brand = "B1" },
             new Car { Name = "Car-2", Brand = "B1"},
-            new Car { Name = "Car-3", Brand= "B2"}
-        };
+            new Car { Name = "Car-3", Brand= "B2"}};
 
 
             var testAllMethodResult = cars.All(x => x.Name.StartsWith("Car")).ToString();
@@ -60,8 +57,26 @@ namespace LINQOperations.Test
 
             this.AddResult(cars.Append(new Car { Name = "Car-4", Brand = "B3" }).Select(x => x.Name));
 
+            this.TestUnion();
             var reverse = cars.Reverse();
             return this.results;
+
+        }
+
+        public void TestUnion()
+        {
+            string[] dataSource1 = { "India", "USA", "UK", "Canada", "Srilanka" };
+            string[] dataSource2 = { "India", "uk", "Canada", "France", "Japan" };
+            //Method Syntax
+            var MS = dataSource1.Union(dataSource2).ToList();
+            //Query Syntax
+            var QS = (from country in dataSource1
+                      select country)
+                      .Union(dataSource2).ToList();
+            foreach (var item in MS)
+            {
+                Console.WriteLine(item);
+            }
 
         }
     }
